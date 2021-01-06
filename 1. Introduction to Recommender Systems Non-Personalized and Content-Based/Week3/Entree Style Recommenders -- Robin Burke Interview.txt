@@ -1,0 +1,153 @@
+Earlier this module we showed you a quick
+glimpse of the Entree recommender system as an example of a class
+of recommenders that have been called knowledge-based, and that help
+people navigate through a set of choices. And I'm delighted that today I have one of the prime visionaries behind that
+recommender, Robin Burke, a professor in the School of Computing at
+DePaul University, with a deep background in artificial intelligence,
+the cognitive side of the field, and then applying that into the area
+of recommender systems. We're going to talk with Robin twice
+during this course, but this particular interview's going to focus on those
+entree and find me style recommenders. So, thank you for joining us today Robin. >> Glad to be here. >> So, as I mentioned the class
+got a little glimpse, just some dead screenshots of entree, and
+hopefully maybe it wouldn't be too much of a pun to say they got a taste of
+the idea of navigating for restaurants. But why don't you just start by telling
+us a little bit about what problems these recommenders were trying to solve. So we were looking at trying to navigate
+in spaces with lots of choices, restaurants being one example,
+there are many in Chicago. And we were coming from this
+background of case based reasoning. And case based reasoning is a branch
+of artificial intelligence that deals with large chunks of data, so say an entire plan as opposed
+to little steps in the plan. And so a restaurant,
+sort of being a complex entity, a lot of aspects to it, these seem like
+they were kind of case-like to us. And so some of the same ideas of
+retrieving cases seem like they might naturally apply to finding products
+in these kinds of systems. >> So
+how exactly do these recommenders work? >> So the basic idea, the basic
+operation is similar reassessment. And so you want to find
+the similarity between an object that you have and the objects that
+are out there in the database. And so one of the things that you can do,
+maybe you showed this with Entree, is you can come in with a restaurant
+you know about from some other city and find a similar restaurant in Chicago. And similarities actually kind of a more complex operation than you
+might initially expect in these systems. Different aspects of the restaurant
+are of different importance when you're assessing similarity,
+as you can tell. If you ask me for an Italian restaurant,
+or if you presented me with an example of an Italian restaurant and said, find
+me something like this, and I found you a Thai restaurant, you'd probably
+think that was a little bit strange. So cuisine obviously is very important. And then if you showed me a hole in
+the wall, an expensive restaurant, and I showed you a very
+expensive one in response, you probably wouldn't think
+that was very similar. So there are a set of different criteria
+along which we assess similarity. And they're arranged hierarchically. So, we look for cuisine first,
+and then price, and then I think quality of the experience which was
+one of the measures we had in our data. So we assessed the similarity in that way. And, and again, similarity's somewhat
+complex, even for something like price. So, if I am looking for a restaurant in a given price point and
+you show me something cheaper, if everything else is equal,
+I'm probably pretty happy. If I can get a restaurant
+just like one back home but it's cheaper, then that's fine. Whereas if you show me something more
+expensive, maybe I'm less happy. So the similarity is actually asymmetric. So restaurant A might be similar to
+restaurant B because it's cheaper, but then going the other way,
+the similarity wouldn't apply, because the other restaurant
+is more expensive. So yeah. >> So did you have to figure out
+all of these prioritizations and relationships yourself? Or were they things that you
+tried to learn from the data? >> So we didn't have any
+data that told us how people thought about the similarity
+of restaurants. I suppose we could have interviewed people
+and performed experiments for that so it was more looking at how
+restaurants were reviewed, and looking at the kinds of
+restaurants that they were. Going to restaurants, although I didn't have a restaurant going
+budget unfortunately for this project. And so, that was all manual knowledge engineering
+to setup the similarity matrix. >> Did you, just as an example, did you
+actually deal with the distance function within a domain, so is Thai closer
+to Vietnamese than it is to German? >> Yes so there's a semantic
+network that I built for cuisines that relate them to each other,
+so that for any two cuisines, you could find
+the difference between them. And actually one of the things
+we found was that, one thing, restaurants have multiple cuisines,
+at least in our, in the data that we have. And also some cities actually have
+certain cuisines that other cities don't. And so you can't necessarily rely
+on this equality to do that. And even the same cuisine,
+pizza in Chicago, pizza in New York, may not be quite the same food. >> That's true, but we didn't actually
+attempt to get to that level of detail. >> Sure. Now, it sounds like it's just an amazing
+amount of data that went into this. How much work was it to assemble
+all the data that you would need to be able to build this recommender? >> So the data we scraped off the web,
+this was in the early days that there were some
+sites that had the restaurant data online. One of the things that we found was that
+restaurants come and go pretty quickly. And so our data started to
+get out of date pretty fast. And we never had the ability to
+go back and recover that data. So it was, that was pretty important and it was a lot of work to
+assemble the data we needed. >> Is there a user model in the system
+beyond the current item that they're looking at? Does the system track that, you went
+through these three items and critiques, and therefore I know something more than that you're currently looking
+at a particular restaurant? >> All right, that's a good question. So, we actually investigated a couple of
+different kinds of models of the user. So one was the one that you suggested
+which is let's keep track of the critiques that someone has applied and
+try and learn something about that. And I know other people who have built crritique-based recommender systems
+have done that, but in our case what we noticed when we did that was that
+your set of options got small really fast. So if you said,
+show me something cheaper, and then you never showed anybody
+anything above that price point, eventually you got to this point where
+you just couldn't show them anything, and then you didn't know which constraint
+to relax to show them something. And people found that kind of frustrating. And one of the benefits
+of the system we thought, was that actually the system
+would always show you something. It would never say, sorry no options,
+go back and start over. It could always show you something,
+even if it was far away in terms of the similarity metric,
+it could show you something. So we actually did not retain
+that information about the critiques that were applied. And we found that actually
+encouraged users to explore. So it very often happened that
+somebody would hit cheaper, cheaper, cheaper, cheaper, cheaper,
+or better, better, better, better, better, just to see what
+there was in the catalog. What's the cheapest Italian restaurant, what's the most expensive
+French restaurant? People would explore the [INAUDIBLE]
+using the critiques. And if we treated each one of
+those steps as something that's sort of closed off aspects of the search, then they would pretty soon end up stuck,
+and having to start over. The other kind of user model that we considered had to
+do with the similarity method itself. It could be that what you think is similar
+is different than what I think is similar. And in particular there was this
+tradeoff between price and quality. So if you have lots of money and
+money is no object, you just want to have a great meal,
+then you might put price lower down in the hierarchy
+of the similarity metric. So, we looked into that, and
+it was clear that we could do that, but then we had to figure out, try and detect
+if somebody was rich or not basically. Or whether they were feeling
+rich on that particular day. And that turned out to be quite difficult. So in the end we just stuck with
+the default similarity metric, and later on when you're working
+in the commercial realm, we considered ways of letting
+the user finding a good user comprehensible way of letting
+them choose their similarity metric. But for this system we didn't do that. >> So, one of the things I loved about the
+system, and I've thought of many times, and it came up since, is the ability to
+come in and say, well gee, this is exactly the restaurant I would go to, but
+I'm not in the mood for Chinese food. Can you find me a restaurant like this but
+Italian? Which, at the beginning is
+sort of counterintuitive, yet, it actually comes up in conversations. I'll say to the family We would go to this
+restaurant, but we're in the mood for Italian, what's similar? I wonder could you tell
+us a little bit about what user experience was like with this? What kind of feedback did you get? Did other people enjoy playing
+around with those kinds of queries? >> Yes, so that was,
+we found that kind query appeared a lot. And we originally had we had
+this idea that you could move a long with different dimensions and
+like price and quality and so forth. And then we came to the cuisine one and
+I was like well, do you want to move along that dimension. We thought I guess may be you would. And it was very natural
+in the system to do it. So all you had to do was make
+up a pretend restaurant, so the restaurant that you want, so your favorite Chinese
+restaurant except Italian. And then stake that into
+the database as a query and see what you get back see what
+the closest thing in there is. And this is a very standard kind
+of operation in type retrieval. So it came naturally out of the system. And so very much I think people used the system to explore, and
+explore the space of possibilities. See what was, what was available,
+even if they ended up settling for something you know maybe more expensive. They learned something by looking for
+cheaper store, and seeing what the range of
+possibilities were in the data. And seeing what the trade offs are. So some restaurants just by virtue of sort of price-quality trade off,
+end up just not being as good as others. And that shows up in
+the way things are ranked. Neat, so one last question for you. Wondering what happened to the technology, does it gets used today in
+commercial applications or other situations where this approach
+has turned out to be really useful? >> So
+there are a number of fielded systems. I was, I helped start up a company
+which crashed in the dotcom era. And so, who knows what would have happened
+if we had gotten our third round of funding, but in Europe, a number of
+researchers picked up on it, and there were some fielded systems there, so. There are systems in travel,
+for apartment hunting, for insurance products,
+I think that somewhere out there is a golf course recommender that
+we developed and installed for a client, but
+I don't know if it's still running or not. [LAUGH]
+>> Neat. Well thank you so much for joining us,
+and for telling us quite a bit more about Entree, the Find Me systems, and more
+generally knowledge-based recommenders. >> Thank you.
